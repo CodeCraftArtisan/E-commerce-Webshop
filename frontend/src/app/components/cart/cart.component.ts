@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CartService } from '../shop/services/cart.service';
 import { Cart, CartItems } from '../../components/types';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../shop/services/auth.service';
 
 @Component({
   selector: 'app-cart',
@@ -14,28 +13,16 @@ import { AuthService } from '../shop/services/auth.service';
 export class CartComponent implements OnInit {
   cart: Cart | null = null;
   total: number = 0;
-  userEmail: string | null = null;
-  constructor(
-    private cartService: CartService,
-    private authService: AuthService
-  ) {}
+
+  constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.userEmail = this.authService.getUserEmail();
-
-    if (!this.userEmail) {
-      console.warn('User is not logged in. Redirecting to home...');
-      return;
-    }
-
     this.loadCart();
   }
 
-  // Fetch the user's cart
+  // Fetch the authenticated user's cart
   loadCart(): void {
-    if (!this.userEmail) return;
-
-    this.cartService.getCartByUserEmail(this.userEmail).subscribe({
+    this.cartService.getCart().subscribe({
       next: (cart) => {
         this.cart = cart;
         this.calculateTotal();
@@ -49,34 +36,28 @@ export class CartComponent implements OnInit {
 
   // Update quantity of an item
   updateQuantity(item: CartItems, newQuantity: number): void {
-    if (!this.userEmail || newQuantity <= 0) return;
+    if (newQuantity <= 0) return;
 
-    this.cartService
-      .addItemToCart(this.userEmail, item.productId, newQuantity)
-      .subscribe({
-        next: () => {
-          this.loadCart();
-        },
-        error: (err) => {
-          console.error('Error updating quantity:', err);
-        },
-      });
+    this.cartService.addItemToCart(item.productId, newQuantity).subscribe({
+      next: () => {
+        this.loadCart();
+      },
+      error: (err) => {
+        console.error('Error updating quantity:', err);
+      },
+    });
   }
 
   // Remove an item from the cart
   removeItem(item: CartItems): void {
-    if (!this.userEmail) return;
-
-    this.cartService
-      .removeItemFromCart(this.userEmail, item.productId)
-      .subscribe({
-        next: () => {
-          this.loadCart();
-        },
-        error: (err) => {
-          console.error('Error removing item:', err);
-        },
-      });
+    this.cartService.removeItemFromCart(item.productId).subscribe({
+      next: () => {
+        this.loadCart();
+      },
+      error: (err) => {
+        console.error('Error removing item:', err);
+      },
+    });
   }
 
   // Calculate total price

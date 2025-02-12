@@ -15,7 +15,8 @@ export interface Product {
   stockQuantity: number;
   categoryId: string;
   imageUrls: string[];
-  category: string[];
+  category: string;
+  brand: string;
   rating?: number;
 }
 

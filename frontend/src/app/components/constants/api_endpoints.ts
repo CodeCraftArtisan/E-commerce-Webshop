@@ -48,12 +48,12 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `${BASE_URL}/reviews/${id}`,
   },
   auth: {
-    authenticate: `${BASE_URL}/auth/authenticate`,
+    authenticate: `${BASE_URL}/v1/auth/authenticate`,
     register: `${BASE_URL}/auth/register`,
 
     // For production:
     authenticateProd: `${PROD_BASE_URL}/auth/authenticate`,
-    registerProd: `${PROD_BASE_URL}/auth/register`,
+    registerProd: `${PROD_BASE_URL}v1/auth/register`,
   },
 };
 

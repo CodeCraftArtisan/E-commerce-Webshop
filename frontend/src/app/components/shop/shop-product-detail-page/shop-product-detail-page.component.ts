@@ -20,10 +20,10 @@ export class ShopProductDetailPageComponent implements OnInit {
   productId: string | null = null;
   product: Product | undefined;
   currentImageIndex: number = 0;
-  initialQuantity = 1; // Default quantity to 1
+  initialQuantity = 1;
   userEmail: string | null = null;
   isAuthenticated: boolean = false;
-  isLoading: boolean = false; // New state to track loading for addToCart
+  isLoading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -105,23 +105,19 @@ export class ShopProductDetailPageComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true; // Set loading state
-    this.cartService
-      .addItemToCart(this.userEmail!, this.product.id, quantity)
-      .subscribe({
-        next: (updatedCart) => {
-          this.isLoading = false; // Reset loading state
-          console.log('Product added to cart:', updatedCart);
-          alert('Product successfully added to the cart!');
-        },
-        error: (err: any) => {
-          this.isLoading = false; // Reset loading state
-          console.error('Error adding product to cart:', err);
-          alert(
-            'Failed to add the product to the cart. Please try again later.'
-          );
-        },
-      });
+    this.isLoading = true;
+    this.cartService.addItemToCart(this.product.id, quantity).subscribe({
+      next: (updatedCart) => {
+        this.isLoading = false;
+        console.log('Product added to cart:', updatedCart);
+        alert('Product successfully added to the cart!');
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        console.error('Error adding product to cart:', err);
+        alert('Failed to add the product to the cart. Please try again later.');
+      },
+    });
   }
 
   /**
